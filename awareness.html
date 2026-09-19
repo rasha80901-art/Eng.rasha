@@ -8,10 +8,12 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body class="alert-page red-code-body">
-<section id="preLoaderBlackScreen" class="pre-loader-black-screen"></section>
-<audio id="thirdPageAudio" src="third_page_sound.mp3" preload="auto" playsinline></audio>
-<audio id="fourthPageAudio" src="fourth_page_sound.mp3" preload="auto" playsinline></audio>
-<audio id="pageSixAudio" src="page6_audio.m4a" preload="auto" playsinline></audio>
+<section id="preLoaderBlackScreen" class="pre-loader-black-screen">
+  <button id="mediaStartBtn" class="media-start-btn" type="button">اضغط للمتابعة</button>
+</section>
+<audio id="thirdPageAudio" src="third_page_sound.mp3?v=61" preload="auto" playsinline></audio>
+<audio id="fourthPageAudio" src="fourth_page_sound.mp3?v=61" preload="auto" playsinline></audio>
+<audio id="pageSixAudio" src="page6_audio.m4a?v=61" preload="auto" playsinline></audio>
 <!-- Step 1: loader + alert sound only here -->
 <section id="loaderScreen" class="loader-screen" style="display:none">
   <div class="loader-box">
@@ -65,7 +67,7 @@
         <video
           id="prankVideo"
           muted
-          src="prank_video.mp4"
+          src="prank_video.mp4?v=61"
           autoplay
           loop
           playsinline
@@ -91,8 +93,8 @@
         <video
           id="pageSixVideo"
           class="page-six-video"
-          src="page6_video.mp4"
-          poster="page6_poster.jpg"
+          src="page6_video.mp4?v=61"
+          poster="page6_poster.jpg?v=61"
           muted
           loop
           playsinline
@@ -112,6 +114,7 @@
 <script>
 
 const preLoaderBlackScreen = document.getElementById('preLoaderBlackScreen');
+const mediaStartBtn = document.getElementById('mediaStartBtn');
 const loaderScreen = document.getElementById('loaderScreen');
 const scareScreen = document.getElementById('scareScreen');
 const silentBlackScreen = document.getElementById('silentBlackScreen');
@@ -350,7 +353,51 @@ function startLoaderPage(){
   }, 115);
 }
 
-setTimeout(startLoaderPage, 2000);
+let experienceStarted = false;
+
+async function unlockAudioElement(el){
+  if(!el) return;
+  try{
+    const oldVolume = el.volume;
+    el.muted = false;
+    el.volume = 0;
+    el.currentTime = 0;
+    const playPromise = el.play();
+    if(playPromise && typeof playPromise.then === 'function'){
+      await playPromise.catch(() => {});
+    }
+    el.pause();
+    el.currentTime = 0;
+    el.volume = oldVolume || 1;
+  }catch(e){}
+}
+
+function beginExperience(){
+  if(experienceStarted) return;
+  experienceStarted = true;
+  if(mediaStartBtn){
+    mediaStartBtn.disabled = true;
+    mediaStartBtn.style.opacity = '0';
+  }
+
+  // Unlock every sound element during this direct user gesture so iPhone Safari
+  // can play them later during timed page transitions.
+  unlockAudioElement(thirdPageAudio);
+  unlockAudioElement(fourthPageAudio);
+  unlockAudioElement(pageSixAudio);
+
+  // Preserve the requested two-second black screen after page 1.
+  setTimeout(startLoaderPage, 2000);
+}
+
+if(mediaStartBtn){
+  mediaStartBtn.addEventListener('click', beginExperience, {once:true});
+}
+if(preLoaderBlackScreen){
+  preLoaderBlackScreen.addEventListener('click', (e) => {
+    if(e.target !== mediaStartBtn) beginExperience();
+  }, {once:true});
+}
 
 function startScareCountdown(){
   let n = 3;

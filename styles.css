@@ -2568,3 +2568,34 @@ textarea{
     grid-template-columns:1fr;
   }
 }
+
+
+/* V61 - one-tap media unlock for iPhone/Safari */
+.pre-loader-black-screen{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.media-start-btn{
+  appearance:none;
+  -webkit-appearance:none;
+  border:1px solid rgba(255,255,255,.18);
+  background:rgba(255,255,255,.06);
+  color:rgba(255,255,255,.88);
+  font-family:"IBM Plex Sans Arabic","Segoe UI",Tahoma,Arial,sans-serif;
+  font-size:16px;
+  font-weight:600;
+  padding:12px 22px;
+  border-radius:999px;
+  cursor:pointer;
+  transition:opacity .18s ease, background .18s ease;
+}
+.media-start-btn:active{
+  background:rgba(255,255,255,.12);
+}
+@media(max-width:768px){
+  .media-start-btn{
+    font-size:15px;
+    padding:11px 20px;
+  }
+}
