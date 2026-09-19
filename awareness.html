@@ -11,9 +11,9 @@
 <section id="preLoaderBlackScreen" class="pre-loader-black-screen">
   <button id="mediaStartBtn" class="media-start-btn" type="button">اضغط للمتابعة</button>
 </section>
-<audio id="thirdPageAudio" src="third_page_sound.mp3?v=61" preload="auto" playsinline></audio>
-<audio id="fourthPageAudio" src="fourth_page_sound.mp3?v=61" preload="auto" playsinline></audio>
-<audio id="pageSixAudio" src="page6_audio.m4a?v=61" preload="auto" playsinline></audio>
+<audio id="thirdPageAudio" src="third_page_sound.mp3?v=62" preload="auto" playsinline></audio>
+<audio id="fourthPageAudio" src="fourth_page_sound.mp3?v=62" preload="auto" playsinline></audio>
+<audio id="pageSixAudio" src="page6_audio.m4a?v=62" preload="auto" playsinline></audio>
 <!-- Step 1: loader + alert sound only here -->
 <section id="loaderScreen" class="loader-screen" style="display:none">
   <div class="loader-box">
@@ -67,11 +67,10 @@
         <video
           id="prankVideo"
           muted
-          src="prank_video.mp4?v=61"
-          autoplay
+          src="prank_video.mp4?v=62"
           loop
           playsinline
-          preload="auto"
+          preload="metadata"
         ></video>
       </div>
 
@@ -93,8 +92,8 @@
         <video
           id="pageSixVideo"
           class="page-six-video"
-          src="page6_video.mp4?v=61"
-          poster="page6_poster.jpg?v=61"
+          src="page6_video.mp4?v=62"
+          poster="page6_poster.jpg?v=62"
           muted
           loop
           playsinline
@@ -132,6 +131,15 @@ if(pageSixAudio){
   pageSixAudio.currentTime = 0;
 }
 const prankVideo = document.getElementById('prankVideo');
+if(prankVideo){
+  prankVideo.pause();
+  prankVideo.currentTime = 0;
+  prankVideo.muted = true;
+}
+if(videoScreen){
+  videoScreen.style.display = 'none';
+}
+
 const videoProgressFill = document.getElementById('videoProgressFill');
 const thirdPageAudio = document.getElementById('thirdPageAudio');
 const fourthPageAudio = document.getElementById('fourthPageAudio');
@@ -265,12 +273,13 @@ function stopFourthPageAudio(){
   }catch(e){}
 }
 
-/* ---------- intermediate video page: 10 seconds ---------- */
+/* ---------- page 5 video: starts only here ---------- */
 let videoScreenTimer = null;
 let videoProgressTimer = null;
 
 function startPrankVideoPage(){
   videoScreen.style.display = 'block';
+  videoScreen.classList.remove('fade-out');
   startFourthPageAudio();
   window.scrollTo({top:0, behavior:'auto'});
 
