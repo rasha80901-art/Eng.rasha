@@ -11,6 +11,7 @@
 <section id="preLoaderBlackScreen" class="pre-loader-black-screen"></section>
 <audio id="thirdPageAudio" src="third_page_sound.mp3" preload="auto" playsinline></audio>
 <audio id="fourthPageAudio" src="fourth_page_sound.mp3" preload="auto" playsinline></audio>
+<audio id="pageSixAudio" src="page6_audio.m4a" preload="auto" playsinline></audio>
 <!-- Step 1: loader + alert sound only here -->
 <section id="loaderScreen" class="loader-screen" style="display:none">
   <div class="loader-box">
@@ -91,6 +92,8 @@
           id="pageSixVideo"
           class="page-six-video"
           src="page6_video.mp4"
+          poster="page6_poster.jpg"
+          muted
           loop
           playsinline
           preload="auto"
@@ -115,9 +118,15 @@ const silentBlackScreen = document.getElementById('silentBlackScreen');
 const videoScreen = document.getElementById('videoScreen');
 const pageSixScreen = document.getElementById('pageSixScreen');
 const pageSixVideo = document.getElementById('pageSixVideo');
+const pageSixAudio = document.getElementById('pageSixAudio');
 if(pageSixVideo){
   pageSixVideo.pause();
+  pageSixVideo.muted = true;
   pageSixVideo.currentTime = 0;
+}
+if(pageSixAudio){
+  pageSixAudio.pause();
+  pageSixAudio.currentTime = 0;
 }
 const prankVideo = document.getElementById('prankVideo');
 const videoProgressFill = document.getElementById('videoProgressFill');
@@ -298,10 +307,15 @@ function startPrankVideoPage(){
       videoScreen.style.display = 'none';
       pageSixScreen.style.display = 'block';
       if(pageSixVideo){
-        pageSixVideo.muted = false;
-        pageSixVideo.volume = 1;
+        pageSixVideo.muted = true;
         pageSixVideo.currentTime = 0;
         pageSixVideo.play().catch(() => {});
+      }
+      if(pageSixAudio){
+        pageSixAudio.pause();
+        pageSixAudio.currentTime = 0;
+        pageSixAudio.volume = 1;
+        pageSixAudio.play().catch(() => {});
       }
       window.scrollTo({top:0, behavior:'auto'});
     }, 450);
