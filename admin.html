@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>لوحة نتائج المحاكاة</title>
+  <meta name="theme-color" content="#101612">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="dashboard-page">
+  <div class="wrap">
+    <div class="dash-top">
+      <div>
+        <div class="brand-mini">لوحة نتائج الحملة</div>
+        <h1 class="dash-title">متابعة المشاركين</h1>
+      </div>
+      <div class="top-actions">
+        <button id="exportBtn" class="ghost-btn" style="display:none">تصدير CSV</button>
+        <button id="logoutBtn" class="ghost-btn" style="display:none">تسجيل الخروج</button>
+      </div>
+    </div>
+
+    <div id="loginBox" class="card content-card">
+      <h2>دخول المشرف</h2>
+      <p class="muted">استخدمي حساب المشرف الذي أنشأته في Supabase.</p>
+      <input id="email" type="email" placeholder="البريد الإلكتروني">
+      <input id="password" type="password" placeholder="كلمة المرور">
+      <button id="loginBtn" class="btn">دخول</button>
+      <p id="loginMsg" class="helper-text"></p>
+    </div>
+
+    <div id="dashboard" style="display:none">
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <span>إجمالي المشاركين</span>
+          <strong id="kpiAll">0</strong>
+        </div>
+        <div class="kpi-card">
+          <span>ضغطوا الرابط</span>
+          <strong id="kpiClicked">0</strong>
+        </div>
+        <div class="kpi-card">
+          <span>أكملوا التوعية</span>
+          <strong id="kpiDone">0</strong>
+        </div>
+        <div class="kpi-card">
+          <span>نسبة الإكمال</span>
+          <strong id="kpiRate">0%</strong>
+        </div>
+      </div>
+
+      <div class="card content-card table-card">
+        <div class="table-header">
+          <h3>النتائج التفصيلية</h3>
+          <p class="muted">يتم عرض الاسم، حالة الضغط، حالة إكمال الدورة، وروابط المشاركين.</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>المشارك</th>
+                <th>المعرف</th>
+                <th>ضغط الرابط</th>
+                <th>أكمل الدورة</th>
+                <th>وقت الضغط</th>
+                <th>وقت الإكمال</th>
+              </tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card content-card">
+        <h3>روابط المشاركين</h3>
+        <p class="muted">انسخي روابط المشاركين وأرسلي لكل مشارك رابطه الخاص.</p>
+        <div id="linksBox" class="links-box"></div>
+      </div>
+    </div>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script>
+const client = supabase.createClient(SIM_CONFIG.SUPABASE_URL, SIM_CONFIG.SUPABASE_ANON_KEY);
+const loginBox = document.getElementById('loginBox');
+const dashboard = document.getElementById('dashboard');
+const logoutBtn = document.getElementById('logoutBtn');
+const exportBtn = document.getElementById('exportBtn');
+let cachedRows = [];
+
+function escapeHtml(s){
+  return String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;', "'":'&#39;'}[m]));
+}
+
+function formatDate(v){
+  if(!v) return '—';
+  try{
+    return new Date(v).toLocaleString('ar-SA');
+  }catch(e){
+    return v;
+  }
+}
+
+function statusPill(value){
+  return `<span class="status ${value ? 'yes':'no'}">${value ? 'نعم':'لا'}</span>`;
+}
+
+function buildLink(token){
+  return `${location.origin}${location.pathname.replace('admin.html','')}?t=${token}`;
+}
+
+async function loadData(){
+  const {data, error} = await client
+    .from('simulation_participants')
+    .select('display_name, participant_token, clicked_at, training_completed_at, created_at')
+    .order('created_at', {ascending: true});
+
+  if(error){
+    alert('تعذر قراءة النتائج: ' + error.message);
+    return;
+  }
+
+  cachedRows = data || [];
+  const total = cachedRows.length;
+  const clicked = cachedRows.filter(x => x.clicked_at).length;
+  const done = cachedRows.filter(x => x.training_completed_at).length;
+  const rate = total ? Math.round((done / total) * 100) : 0;
+
+  document.getElementById('kpiAll').textContent = total;
+  document.getElementById('kpiClicked').textContent = clicked;
+  document.getElementById('kpiDone').textContent = done;
+  document.getElementById('kpiRate').textContent = rate + '%';
+
+  document.getElementById('rows').innerHTML = cachedRows.map(x => `
+    <tr>
+      <td>${escapeHtml(x.display_name || 'بدون اسم')}</td>
+      <td>${escapeHtml(x.participant_token.slice(0,8))}…</td>
+      <td>${statusPill(x.clicked_at)}</td>
+      <td>${statusPill(x.training_completed_at)}</td>
+      <td>${formatDate(x.clicked_at)}</td>
+      <td>${formatDate(x.training_completed_at)}</td>
+    </tr>
+  `).join('');
+
+  document.getElementById('linksBox').innerHTML = cachedRows.map(x => {
+    const link = buildLink(x.participant_token);
+    return `
+      <div class="link-item">
+        <strong>${escapeHtml(x.display_name || 'بدون اسم')}</strong>
+        <input type="text" readonly value="${escapeHtml(link)}" onclick="this.select()">
+      </div>
+    `;
+  }).join('');
+}
+
+function exportCSV(){
+  const rows = [
+    ['الاسم','المعرف','ضغط الرابط','أكمل الدورة','وقت الضغط','وقت الإكمال','الرابط']
+  ];
+  cachedRows.forEach(x => {
+    rows.push([
+      x.display_name || '',
+      x.participant_token,
+      x.clicked_at ? 'نعم' : 'لا',
+      x.training_completed_at ? 'نعم' : 'لا',
+      x.clicked_at || '',
+      x.training_completed_at || '',
+      buildLink(x.participant_token)
+    ]);
+  });
+
+  const csv = rows.map(r => r.map(cell => `"${String(cell).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob(["\ufeff" + csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'simulation_results.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+async function refreshAuth(){
+  const {data:{session}} = await client.auth.getSession();
+  if(session){
+    loginBox.style.display='none';
+    dashboard.style.display='block';
+    logoutBtn.style.display='inline-flex';
+    exportBtn.style.display='inline-flex';
+    await loadData();
+  }else{
+    loginBox.style.display='block';
+    dashboard.style.display='none';
+    logoutBtn.style.display='none';
+    exportBtn.style.display='none';
+  }
+}
+
+document.getElementById('loginBtn').onclick = async () => {
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const msg = document.getElementById('loginMsg');
+  msg.textContent = 'جارٍ تسجيل الدخول...';
+
+  const {error} = await client.auth.signInWithPassword({email, password});
+  if(error){
+    msg.textContent = 'تعذر الدخول: ' + error.message;
+    return;
+  }
+  msg.textContent = '';
+  refreshAuth();
+};
+
+logoutBtn.onclick = async () => {
+  await client.auth.signOut();
+  refreshAuth();
+};
+
+exportBtn.onclick = exportCSV;
+refreshAuth();
+</script>
+</body>
+</html>

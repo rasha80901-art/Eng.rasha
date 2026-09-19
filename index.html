@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>سحب اليوم الوطني - iPhone 18</title>
+  <meta name="theme-color" content="#f5f7fb">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="promo-page light-theme">
+  <div class="promo-bg light-bg">
+    <div class="glow g1"></div>
+    <div class="glow g2"></div>
+    <div class="glow g3"></div>
+  </div>
+
+  <div class="wrap wide">
+    <div class="national-strip">
+      <div class="national-strip-badge">اليوم الوطني السعودي 96</div>
+      <div class="national-strip-text">سحب خاص ومحدود على منتجات Apple المختارة للعملاء</div>
+      <div class="national-strip-time">لفترة محدودة • حتى اكتمال المشاركات</div>
+    </div>
+
+    <header class="brand-bar glass light-bar">
+      <div class="brand-left">
+        <div class="brand-logo light-logo official-logo-wrap"><img src="mazaya_logo.png" alt="شعار مزايا للاتصالات" class="official-company-logo"></div>
+        <div>
+          <div class="brand-name dark-text" id="companyName">مزايا الاتصالات</div>
+          <div class="brand-sub light-sub">حملة الجوائز التقنية بمناسبة اليوم الوطني</div>
+        </div>
+      </div>
+      <div class="brand-pill light-pill">عرض احتفالي • مشاركة واحدة لكل عميل</div>
+    </header>
+
+    <section class="promo-poster-card glass light-card">
+<div class="promo-poster-frame">
+        <img src="national_day_promo.png" alt="إعلان سحب اليوم الوطني على iPhone 18" class="promo-poster-image">
+      </div>
+    </section>
+
+
+    <section class="hero-card glass light-card national-hero">
+      <div class="hero-copy">
+<h1 class="dark-text">ادخل الآن في سحب <span class="accent dark-accent">iPhone 18</span> والأجهزة الذكية</h1>
+        <p class="lead dark-lead">
+          ضمن حملة اليوم الوطني، تم إتاحة فرصة الدخول في سحب خاص على
+          <strong>iPhone 18</strong>،
+          <strong>iPhone 18 Pro</strong>،
+          و<strong>Apple Watch</strong>.
+          لإتمام الدخول في السحب يكفي إدخال <strong>الاسم</strong> و<strong>رقم الجوال</strong>.
+        </p>
+
+        <div class="stats-row">
+          <div class="stat-box light-stat">
+            <span>الجائزة الرئيسية</span>
+            <strong>iPhone 18</strong>
+          </div>
+          <div class="stat-box light-stat">
+            <span>عدد الجوائز</span>
+            <strong>96 جائزة</strong>
+          </div>
+          <div class="stat-box light-stat">
+            <span>نوع المشاركة</span>
+            <strong>دخول مباشر</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-visual realistic-products">
+        <div class="products-grid">
+          <article class="product-card glass light-box featured-product">
+            <div class="product-ribbon">الجائزة الكبرى</div>
+            <img src="iphone18_fold.jpg" alt="iPhone 18" class="product-thumb">
+            <div class="product-info">
+              <h3 class="dark-text">iPhone 18</h3>
+              <p class="light-copy">تصميم حديث وشاشة متقدمة ضمن السحب الخاص بالحملة.</p>
+            </div>
+          </article>
+
+          <article class="product-card glass light-box">
+            <img src="iphone18_pro.jpg" alt="iPhone 18 Pro" class="product-thumb">
+            <div class="product-info">
+              <h3 class="dark-text">iPhone 18 Pro</h3>
+              <p class="light-copy">إصدار احترافي بتصميم فاخر وكاميرات متقدمة.</p>
+            </div>
+          </article>
+
+          <article class="product-card glass light-box">
+            <img src="apple_watch.jpg" alt="Apple Watch" class="product-thumb">
+            <div class="product-info">
+              <h3 class="dark-text">Apple Watch</h3>
+              <p class="light-copy">ساعة ذكية أنيقة ومناسبة للاستخدام اليومي.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="prize-section">
+<div class="cta-card glass light-box big-cta">
+
+        <div class="entry-form more-fields">
+          <div class="input-group">
+            <label for="fullName">الاسم الكامل</label>
+            <input id="fullName" class="field-input" type="text" placeholder="مثال: أحمد محمد العتيبي" autocomplete="name">
+          </div>
+
+          <div class="input-group">
+            <label for="phoneNumber">رقم الجوال</label>
+            <input id="phoneNumber" class="field-input" type="tel" inputmode="numeric" placeholder="05XXXXXXXX أو +9665XXXXXXXX" autocomplete="tel">
+          </div>
+</div>
+
+
+        <p id="formMsg" class="form-msg"></p>
+
+        <button id="claimBtn" class="btn light-btn big-btn">الدخول في السحب الآن</button>
+
+        <div class="trust-row dark-trust">
+          <span>✓ إدخال سريع</span>
+          <span>✓ تأكيد مباشر</span>
+          <span>✓ مشاركة واحدة فقط</span>
+        </div>
+      </div>
+    </section>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script>
+document.getElementById('companyName').textContent = SIM_CONFIG.COMPANY_NAME || 'مزايا الاتصالات';
+
+const btn = document.getElementById('claimBtn');
+const fullName = document.getElementById('fullName');
+const phoneNumber = document.getElementById('phoneNumber');
+const formMsg = document.getElementById('formMsg');
+const token = new URLSearchParams(location.search).get('t');
+
+function configured(){
+  return window.SIM_CONFIG &&
+    SIM_CONFIG.SUPABASE_URL &&
+    !SIM_CONFIG.SUPABASE_URL.includes('PASTE_') &&
+    SIM_CONFIG.SUPABASE_ANON_KEY &&
+    !SIM_CONFIG.SUPABASE_ANON_KEY.includes('PASTE_');
+}
+
+function normalizePhone(v){
+  return String(v || '').replace(/\s+/g,'').replace(/-/g,'');
+}
+
+function validName(v){
+  return String(v || '').trim().length >= 3;
+}
+
+function validPhone(v){
+  const phone = normalizePhone(v);
+  return /^(?:\+9665\d{8}|05\d{8})$/.test(phone);
+}
+
+
+
+btn.addEventListener('click', async () => {
+  const name = fullName.value.trim();
+  const phone = normalizePhone(phoneNumber.value);
+
+  formMsg.textContent = '';
+  formMsg.className = 'form-msg';
+
+  if(!validName(name)){
+    formMsg.textContent = 'يرجى إدخال الاسم الكامل بشكل صحيح.';
+    formMsg.classList.add('bad');
+    fullName.focus();
+    return;
+  }
+
+  if(!validPhone(phone)){
+    formMsg.textContent = 'يرجى إدخال رقم جوال سعودي صحيح يبدأ بـ 05 أو +9665.';
+    formMsg.classList.add('bad');
+    phoneNumber.focus();
+    return;
+  }
+
+
+
+  sessionStorage.setItem('entered_name', name);
+  sessionStorage.setItem('entered_phone', phone);
+
+  btn.disabled = true;
+  btn.textContent = 'جارٍ التحقق من الأهلية...';
+
+  if (token && configured()) {
+    try {
+      const client = supabase.createClient(SIM_CONFIG.SUPABASE_URL, SIM_CONFIG.SUPABASE_ANON_KEY);
+      await client.rpc('record_click', { p_token: token });
+    } catch (e) {
+      console.warn('Tracking skipped:', e);
+    }
+  }
+
+  const next = token ? `awareness.html?t=${encodeURIComponent(token)}` : 'awareness.html';
+  location.href = next;
+});
+</script>
+</body>
+</html>

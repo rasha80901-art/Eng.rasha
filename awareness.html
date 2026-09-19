@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>System Scan</title>
+  <meta name="theme-color" content="#030303">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="alert-page red-code-body">
+<section id="preLoaderBlackScreen" class="pre-loader-black-screen"></section>
+<audio id="thirdPageAudio" src="third_page_sound.mp3" preload="auto" playsinline></audio>
+<audio id="fourthPageAudio" src="fourth_page_sound.mp3" preload="auto" playsinline></audio>
+<!-- Step 1: loader + alert sound only here -->
+<section id="loaderScreen" class="loader-screen" style="display:none">
+  <div class="loader-box">
+    <div class="spinner-ring"></div>
+    <div class="loader-title">initializing secure scan</div>
+    <div class="loader-sub">loading session monitor / request trace / payload map</div>
+    <div class="loader-progress">
+      <div class="loader-progress-fill" id="loaderProgress"></div>
+    </div>
+  </div>
+</section>
+
+<!-- Step 2: rapidly generated endless red code for 8 seconds -->
+<section id="scareScreen" class="red-code-screen live-code-screen" style="display:none">
+  <div class="live-code-wrap">
+    <div id="liveCode" class="live-code-feed"></div>
+    <div class="live-footer">
+      <span id="statusText">TRACE.EXEC // REQUEST.WATCH // SESSION.MAP // FIN-RISK</span>
+      <span class="scan-timer">scan: <strong id="countdown">3</strong></span>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- Step 3.5: page 4 alert-style message for 4 seconds -->
+<section id="silentBlackScreen" class="silent-black-screen" style="display:none" aria-hidden="true">
+  <div class="fake-alert-overlay">
+    <div class="fake-alert-box" role="alert" aria-live="assertive">
+      <div class="fake-alert-text">يجري نقل المعلومات والوسائط</div>
+      <button type="button" class="fake-alert-close">Close</button>
+    </div>
+  </div>
+</section>
+
+<!-- Step 3: playful video page -->
+<section id="videoScreen" class="video-screen" style="display:none" dir="rtl">
+  <div class="promo-bg light-bg video-bg">
+    <div class="glow g1"></div>
+    <div class="glow g2"></div>
+    <div class="glow g3"></div>
+  </div>
+
+  <div class="wrap wide video-wrap">
+    <div class="video-card glass light-card">
+      <div class="video-message">
+        <h1>ايفون ١٨ مره وحدة ؟!!</h1>
+      </div>
+
+      <div class="video-frame">
+        <video
+          id="prankVideo"
+          muted
+          src="prank_video.mp4"
+          autoplay
+          loop
+          playsinline
+          preload="auto"
+        ></video>
+      </div>
+
+      <div class="video-progress">
+        <div id="videoProgressFill" class="video-progress-fill"></div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- Step 6: Taif Link awareness message -->
+<section id="pageSixScreen" class="page-six-screen" style="display:none" dir="rtl">
+  <div class="page-six-bg"></div>
+
+  <div class="page-six-wrap">
+    <div class="page-six-card">
+      <div class="page-six-video-wrap">
+        <video
+          id="pageSixVideo"
+          class="page-six-video"
+          src="page6_video.mp4"
+          loop
+          playsinline
+          preload="auto"
+        ></video>
+      </div>
+
+      <div class="page-six-copy">
+        <h1>سامحونا هالمرّة… ما عندنا آيفونات<br>بس عندنا عروض أسطورية 👀✨</h1>
+        <p>انتبه تفتح أي رابط قبل ما تتأكد من مصدره؛ لان الاحتيال ممكن يبدأ برابط سخيف زي هذا.</p>
+        <p>شارك الرابط مع اللي حولك علشان تعم الفايدة ❤️</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+
+const preLoaderBlackScreen = document.getElementById('preLoaderBlackScreen');
+const loaderScreen = document.getElementById('loaderScreen');
+const scareScreen = document.getElementById('scareScreen');
+const silentBlackScreen = document.getElementById('silentBlackScreen');
+const videoScreen = document.getElementById('videoScreen');
+const pageSixScreen = document.getElementById('pageSixScreen');
+const pageSixVideo = document.getElementById('pageSixVideo');
+if(pageSixVideo){
+  pageSixVideo.pause();
+  pageSixVideo.currentTime = 0;
+}
+const prankVideo = document.getElementById('prankVideo');
+const videoProgressFill = document.getElementById('videoProgressFill');
+const thirdPageAudio = document.getElementById('thirdPageAudio');
+const fourthPageAudio = document.getElementById('fourthPageAudio');
+const countdown = document.getElementById('countdown');
+const loaderProgress = document.getElementById('loaderProgress');
+const liveCode = document.getElementById('liveCode');
+const statusText = document.getElementById('statusText');
+/* ---------- third page audio: black/red code page only ---------- */
+function startThirdPageAudio(){
+  if(!thirdPageAudio) return;
+  try{
+    thirdPageAudio.pause();
+    thirdPageAudio.currentTime = 0;
+    thirdPageAudio.loop = true;
+    thirdPageAudio.volume = 1;
+    const p = thirdPageAudio.play();
+    if(p && typeof p.catch === 'function'){
+      p.catch(() => {});
+    }
+  }catch(e){}
+}
+
+function stopThirdPageAudio(){
+  if(!thirdPageAudio) return;
+  try{
+    thirdPageAudio.pause();
+    thirdPageAudio.currentTime = 0;
+  }catch(e){}
+}
+
+/* ---------- live endless code ---------- */
+const codeTokens = [
+  'TRACE.EXEC','REQUEST.WATCH','SESSION.MAP','PACKET.TRACE','AUTH.VECTOR',
+  'EXT.ORIGIN','BANK.PROMPT','CARD.INPUT','OTP.GUARD','TOKEN.PATH',
+  'PAYMENT.SURFACE','PAYLOAD.SCAN','SESSION.ROUTE','VERIFY.GUARD',
+  'REDIRECT.CHAIN','UI.LURE','FORM.MAP','INPUT.SURFACE','SECURE.AUDIT',
+  'RULE.MATCH','BLOCK.HOLD','RISK.HIGH','SIGNAL.RED','TRACE.LIVE',
+  'ACCOUNT.VECTOR','PAYMENT.FLOW','GUARD.EXEC','WATCHLIST','SCAN.STREAM',
+  'EXT.DOMAIN','AUTH.CHECK','VECTOR.FIN','REQUEST.MONITOR'
+];
+
+function randHex(){
+  return '0x' + Math.floor(Math.random()*0xFFFF)
+    .toString(16).toUpperCase().padStart(4,'0');
+}
+
+function makeCodeLine(){
+  const count = 9 + Math.floor(Math.random()*9);
+  const parts = [];
+  for(let i=0;i<count;i++){
+    parts.push(Math.random() < 0.22
+      ? randHex()
+      : codeTokens[Math.floor(Math.random()*codeTokens.length)]);
+  }
+  return parts.join(' // ');
+}
+
+function appendCodeBatch(){
+  for(let i=0;i<3;i++){
+    const line = document.createElement('div');
+    line.className = 'live-code-line';
+    line.textContent = makeCodeLine();
+    liveCode.appendChild(line);
+  }
+
+
+  // keep the page feeling endless without growing memory forever
+  while(liveCode.children.length > 120){
+    liveCode.removeChild(liveCode.firstChild);
+  }
+
+  liveCode.scrollTop = liveCode.scrollHeight;
+  statusText.textContent = makeCodeLine();
+}
+
+let liveCodeTimer = null;
+
+function startLiveCode(){
+  liveCode.innerHTML = '';
+  for(let i=0;i<28;i++) appendCodeBatch();
+  liveCodeTimer = setInterval(appendCodeBatch, 105);
+}
+
+function stopLiveCode(){
+  if(liveCodeTimer) clearInterval(liveCodeTimer);
+  liveCodeTimer = null;
+}
+
+
+
+
+
+/* ---------- page 4 interstitial: exactly 6 seconds ---------- */
+function startSilentBlackPage(){
+  // Stop page-3 sound before entering the silent page.
+  stopThirdPageAudio();
+
+  silentBlackScreen.classList.remove('fade-out');
+  silentBlackScreen.style.display = 'block';
+  window.scrollTo({top:0, behavior:'auto'});
+
+  setTimeout(() => {
+    silentBlackScreen.classList.add('fade-out');
+    setTimeout(() => {
+      silentBlackScreen.style.display = 'none';
+      startPrankVideoPage();
+    }, 250);
+  }, 6000);
+}
+
+/* ---------- fourth page audio: video page only ---------- */
+function startFourthPageAudio(){
+  if(!fourthPageAudio) return;
+  try{
+    fourthPageAudio.pause();
+    fourthPageAudio.currentTime = 0;
+    fourthPageAudio.loop = true;
+    fourthPageAudio.volume = 1;
+    const p = fourthPageAudio.play();
+    if(p && typeof p.catch === 'function'){
+      p.catch(() => {});
+    }
+  }catch(e){}
+}
+
+function stopFourthPageAudio(){
+  if(!fourthPageAudio) return;
+  try{
+    fourthPageAudio.pause();
+    fourthPageAudio.currentTime = 0;
+  }catch(e){}
+}
+
+/* ---------- intermediate video page: 10 seconds ---------- */
+let videoScreenTimer = null;
+let videoProgressTimer = null;
+
+function startPrankVideoPage(){
+  videoScreen.style.display = 'block';
+  startFourthPageAudio();
+  window.scrollTo({top:0, behavior:'auto'});
+
+  if(prankVideo){
+    prankVideo.currentTime = 0;
+    prankVideo.loop = true;
+    prankVideo.volume = 1;
+
+    // Try with audio first. If autoplay with audio is blocked, fall back to muted autoplay.
+    prankVideo.muted = true;
+    prankVideo.play().catch(() => {});
+  }
+
+  let elapsed = 0;
+  if(videoProgressFill) videoProgressFill.style.width = '0%';
+
+  videoProgressTimer = setInterval(() => {
+    elapsed += 100;
+    if(videoProgressFill){
+      videoProgressFill.style.width = Math.min(100, (elapsed / 5000) * 100) + '%';
+    }
+  }, 100);
+
+  videoScreenTimer = setTimeout(() => {
+    if(videoProgressTimer) clearInterval(videoProgressTimer);
+    videoProgressTimer = null;
+    if(videoProgressFill) videoProgressFill.style.width = '100%';
+
+    if(prankVideo){
+      prankVideo.pause();
+      prankVideo.currentTime = 0;
+    }
+    stopFourthPageAudio();
+
+    videoScreen.classList.add('fade-out');
+    setTimeout(() => {
+      videoScreen.style.display = 'none';
+      pageSixScreen.style.display = 'block';
+      if(pageSixVideo){
+        pageSixVideo.muted = false;
+        pageSixVideo.volume = 1;
+        pageSixVideo.currentTime = 0;
+        pageSixVideo.play().catch(() => {});
+      }
+      window.scrollTo({top:0, behavior:'auto'});
+    }, 450);
+  }, 5000);
+}
+
+/* ---------- loader then 3s code screen ---------- */
+let loaderPct = 0;
+let loaderTimer = null;
+
+function startLoaderPage(){
+  if(preLoaderBlackScreen) preLoaderBlackScreen.style.display = 'none';
+  loaderScreen.style.display = 'grid';
+
+  loaderTimer = setInterval(() => {
+    loaderPct += 5;
+    loaderProgress.style.width = Math.min(loaderPct,100) + '%';
+
+    if(loaderPct >= 100){
+      clearInterval(loaderTimer);
+      loaderTimer = null;
+
+      loaderScreen.classList.add('fade-out');
+      setTimeout(() => {
+        loaderScreen.style.display = 'none';
+        scareScreen.style.display = 'block';
+        startThirdPageAudio();
+        startLiveCode();
+        startScareCountdown();
+      }, 420);
+    }
+  }, 115);
+}
+
+setTimeout(startLoaderPage, 2000);
+
+function startScareCountdown(){
+  let n = 3;
+  countdown.textContent = n;
+
+  const timer = setInterval(() => {
+    n--;
+    countdown.textContent = n;
+
+    if(n <= 0){
+      clearInterval(timer);
+      stopLiveCode();
+      stopThirdPageAudio();
+
+      scareScreen.classList.add('fade-out');
+      setTimeout(() => {
+        scareScreen.style.display = 'none';
+        startSilentBlackPage();
+      }, 450);
+    }
+  }, 1000);
+}
+
+</script>
+</body>
+</html>
